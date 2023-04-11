@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+    <link
+      href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+
+    <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js"></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""
+    ></script>
+
+    <style>
+      #page {
+        display: flex;
+        flex-direction: row;
+      }
+      #mapLibreMap,
+      #leafletMap {
+        width: 400px;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page">
+      <div>
+        Screenshot input:
+        <div id="screenshottable">
+          <h2>MapLibre map</h2>
+          <div id="mapLibreMap"></div>
+          <h2>Leaflet map</h2>
+          <div id="leafletMap"></div>
+
+          <br />
+          <button id="btnTakeScreenshot">Take screenshot</button>
+        </div>
+      </div>
+
+      <div>
+        Screenshot output:
+        <div id="output"></div>
+      </div>
+    </div>
+    <script>
+      const mapLibreMap = new maplibregl.Map({
+        container: 'mapLibreMap',
+        style: 'https://demotiles.maplibre.org/style.json', // stylesheet location
+        center: [0, 51],
+        zoom: 3,
+        preserveDrawingBuffer: true,
+      });
+
+      const leafletMap = L.map('leafletMap').setView([51, 0], 3);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(leafletMap);
+
+      document
+        .querySelector('#btnTakeScreenshot')
+        .addEventListener('click', (e) => {
+          const screenshottableElement =
+            document.querySelector('#screenshottable');
+          const shotPromise = html2canvas(screenshottableElement);
+          shotPromise.then((shot) => {
+            const outputEl = document.querySelector('#output');
+            outputEl.innerHTML = '';
+            outputEl.appendChild(shot);
+          });
+        });
+    </script>
+  </body>
+</html>
